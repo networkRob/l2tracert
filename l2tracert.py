@@ -29,15 +29,20 @@
 #
 #L2TRACERT
 #
-#    Version 1.2  - 7/21/2015 
+#    Version 1.3  - 12/4/2018 
 #    Written by: 
 #       Jeremy Georges - Arista Networks
 #       jgeorges@arista.com
+#
+#       Rob Martin - Arista Networks
+#       robmartin@arista.com
 #
 #    Revision history:
 #       1.0 - initial release - 4/29/2015
 #       1.1 - Added MAC and VLAN validation. Fixed minor bug. - 5/5/2015
 #       1.2 - Added additional logic for Port-channels - 7/21/2015
+#       1.3 - Disabled SSL Verification where it would throw an error in 4.21.1F. - 12/4/2018
+
 
 """ l2tracert 
     The purpose of this script is to provide a traceroute function but at layer 2. The user must specify a destination MAC address
@@ -74,7 +79,7 @@
 
 """
 
-VERSION='1.2'
+VERSION='1.3'
 DEFAULTUSER='admin'
 DEFAULTPW='4me2know'
 
@@ -94,7 +99,15 @@ import sys
 import optparse
 import syslog
 from jsonrpclib import Server
+import ssl
 
+
+#==========================================================
+# Section to disable SSL Verification
+#==========================================================
+if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
+    getattr(ssl, '_create_unverified_context', None)): 
+    ssl._create_default_https_context = ssl._create_unverified_context
 
 #==========================================================
 # Function Definitions
